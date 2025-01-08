@@ -1,9 +1,134 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>테스트 페이지</title>
-  </head>
-  <body>
-    <h1>Firebase Hosting 테스트</h1>
-  </body>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출석 확인</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            background: #dbd8e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #666;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: #ffffff;
+            padding: min(8vh, 40px) min(6vw, 30px);
+            border-radius: min(4vh, 20px);
+            box-shadow: 
+                0 20px 40px rgba(200, 190, 230, 0.15),
+                0 8px 16px rgba(200, 190, 230, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 320px;
+            position: relative;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ffffff;
+            border-radius: min(4vh, 20px);
+            z-index: -1;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: rgba(200, 190, 230, 0.1);
+            border-radius: min(4vh, 20px);
+            z-index: -2;
+        }
+        .success-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: min(4vh, 20px);
+        }
+        .success-text {
+            color: #555555;
+            font-size: min(5vh, 24px);
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        .success-text::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: -10%;
+            width: 120%;
+            height: 8px;
+            background: #f3f0fb;
+            z-index: -1;
+            border-radius: 4px;
+        }
+        .card p {
+            color: #666666;
+            margin: min(3vh, 15px) 0;
+            font-size: min(3.5vh, 16px);
+            line-height: 1.5;
+        }
+        .success-icon {
+            font-size: min(6vh, 32px);
+            color: #e6c4ff;
+            display: inline-block;
+            transform-origin: center;
+            animation: bounce 2s infinite;
+        }
+        .highlight {
+            color: #555555;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: #f3f0fb;
+            z-index: -1;
+            border-radius: 2px;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .left-star {
+            animation-delay: 0s;
+        }
+        .right-star {
+            animation-delay: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="success-header">
+            <div class="success-icon left-star">✨</div>
+            <div class="success-text">오늘도 성공!</div>
+            <div class="success-icon right-star">✨</div>
+        </div>
+        <p>오늘도 <span class="highlight">행복한 하루</span> 되세요!</p>
+    </div>
+</body>
 </html>
