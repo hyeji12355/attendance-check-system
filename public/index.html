@@ -130,5 +130,25 @@
         </div>
         <p>오늘도 <span class="highlight">행복한 하루</span> 되세요!</p>
     </div>
+
+    <!-- Firebase 초기화 스크립트 -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZlLaZ61B3s2UrytwDo6XfD07WO5GSG78",
+            authDomain: "attendance-check-system.firebaseapp.com",
+            projectId: "attendance-check-system",
+            storageBucket: "attendance-check-system.appspot.com",
+            messagingSenderId: "310374000832",
+            appId: "1:310374000832:web:cbc5c82db331ec2a3ca525"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase initialized:", app);
+    </script>
 </body>
 </html>
