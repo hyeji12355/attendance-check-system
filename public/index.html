@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -43,17 +44,6 @@
             border-radius: min(4vh, 20px);
             z-index: -1;
         }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: rgba(200, 190, 230, 0.1);
-            border-radius: min(4vh, 20px);
-            z-index: -2;
-        }
         .success-header {
             display: flex;
             align-items: center;
@@ -68,75 +58,28 @@
             position: relative;
             display: inline-block;
         }
-        .success-text::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: -10%;
-            width: 120%;
-            height: 8px;
-            background: #f3f0fb;
-            z-index: -1;
-            border-radius: 4px;
-        }
         .card p {
             color: #666666;
             margin: min(3vh, 15px) 0;
             font-size: min(3.5vh, 16px);
             line-height: 1.5;
         }
-        .success-icon {
-            font-size: min(6vh, 32px);
-            color: #e6c4ff;
-            display: inline-block;
-            transform-origin: center;
-            animation: bounce 2s infinite;
-        }
-        .highlight {
-            color: #555555;
-            font-weight: 700;
-            position: relative;
-            display: inline-block;
-        }
-        .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 30%;
-            background: #f3f0fb;
-            z-index: -1;
-            border-radius: 2px;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        .left-star {
-            animation-delay: 0s;
-        }
-        .right-star {
-            animation-delay: 0.5s;
-        }
     </style>
 </head>
 <body>
     <div class="card">
         <div class="success-header">
-            <div class="success-icon left-star">✨</div>
             <div class="success-text">오늘도 성공!</div>
-            <div class="success-icon right-star">✨</div>
         </div>
         <p>오늘도 <span class="highlight">행복한 하루</span> 되세요!</p>
     </div>
 
-    <!-- Firebase 초기화 스크립트 -->
+    <!-- Firebase 초기화 및 Firestore 연동 -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-        // Firebase configuration
+        // Firebase 설정
         const firebaseConfig = {
             apiKey: "AIzaSyDZlLaZ61B3s2UrytwDo6XfD07WO5GSG78",
             authDomain: "attendance-check-system.firebaseapp.com",
@@ -146,9 +89,29 @@
             appId: "1:310374000832:web:cbc5c82db331ec2a3ca525"
         };
 
-        // Initialize Firebase
+        // Firebase 초기화
         const app = initializeApp(firebaseConfig);
-        console.log("Firebase initialized:", app);
+        const db = getFirestore(app);
+
+        // URL에서 user_id 가져오기
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get("user_id");
+
+        if (userId) {
+            // Firestore에 출석 기록 추가
+            const attendanceDoc = doc(db, "attendance", userId);
+            setDoc(attendanceDoc, {
+                user_id: userId,
+                attended_at: Timestamp.now()
+            }).then(() => {
+                console.log("출석 기록 성공!");
+            }).catch((error) => {
+                console.error("출석 기록 실패:", error);
+            });
+        } else {
+            console.error("URL에 user_id가 없습니다.");
+        }
     </script>
 </body>
 </html>
+
