@@ -5,79 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>출석 확인</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
         body {
             font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
             background: #dbd8e0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: #666;
+            height: 100vh;
+            margin: 0;
             padding: 20px;
             box-sizing: border-box;
         }
         .card {
             background: #ffffff;
-            padding: min(8vh, 40px) min(6vw, 30px);
-            border-radius: min(4vh, 20px);
-            box-shadow: 
-                0 20px 40px rgba(200, 190, 230, 0.15),
-                0 8px 16px rgba(200, 190, 230, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 90%;
             max-width: 320px;
-            position: relative;
-        }
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #ffffff;
-            border-radius: min(4vh, 20px);
-            z-index: -1;
-        }
-        .success-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: min(4vh, 20px);
-        }
-        .success-text {
-            color: #555555;
-            font-size: min(5vh, 24px);
-            font-weight: 700;
-            position: relative;
-            display: inline-block;
-        }
-        .card p {
-            color: #666666;
-            margin: min(3vh, 15px) 0;
-            font-size: min(3.5vh, 16px);
-            line-height: 1.5;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="success-header">
-            <div class="success-text">오늘도 성공!</div>
-        </div>
-        <p>오늘도 <span class="highlight">행복한 하루</span> 되세요!</p>
+        <h1>출석 확인 중...</h1>
+        <p>잠시만 기다려주세요.</p>
     </div>
 
-    <!-- Firebase 초기화 및 Firestore 연동 -->
+    <!-- Firebase 초기화 및 Firestore 업데이트 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getFirestore, doc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         // Firebase 설정
         const firebaseConfig = {
@@ -98,19 +57,25 @@
         const userId = params.get("user_id");
 
         if (userId) {
-            // Firestore에 출석 기록 추가
+            // Firestore에서 사용자 데이터 업데이트
             const attendanceDoc = doc(db, "attendance", userId);
-            setDoc(attendanceDoc, {
-                user_id: userId,
-                attended_at: Timestamp.now()
+            updateDoc(attendanceDoc, {
+                status: "checked",
+                date: Timestamp.now()
             }).then(() => {
-                console.log("출석 기록 성공!");
+                document.querySelector("h1").textContent = "출석 완료!";
+                document.querySelector("p").textContent = "오늘도 좋은 하루 보내세요!";
+                console.log("출석 상태가 업데이트되었습니다.");
             }).catch((error) => {
-                console.error("출석 기록 실패:", error);
+                document.querySelector("h1").textContent = "오류 발생";
+                document.querySelector("p").textContent = "출석 처리 중 문제가 발생했습니다.";
+                console.error("출석 업데이트 실패:", error);
             });
         } else {
-            console.error("URL에 user_id가 없습니다.");
+            document.querySelector("h1").textContent = "잘못된 요청";
+            document.querySelector("p").textContent = "URL에 user_id가 포함되어 있지 않습니다.";
         }
     </script>
 </body>
 </html>
+
