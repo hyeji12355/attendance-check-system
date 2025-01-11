@@ -1,10 +1,10 @@
-const functions = require("firebase-functions");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const admin = require("firebase-admin");
 
 // Firebase Admin 초기화
 admin.initializeApp();
 
-exports.resetAttendanceStatus = functions.pubsub.schedule("0 0 * * *").onRun(async (context) => {
+exports.resetAttendanceStatus = onSchedule("0 0 * * *", async (context) => {
     const db = admin.firestore();
     const attendanceRef = db.collection("attendance");
 
