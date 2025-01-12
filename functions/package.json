@@ -1,26 +1,23 @@
-exports.resetAttendanceStatus = onSchedule("0 0 * * *", {
-    timeZone: "Asia/Seoul"
-}, async (context) => {
-    console.log("함수 실행 시작");
-
-    const db = admin.firestore();
-    const attendanceRef = db.collection("attendance");
-
-    try {
-        console.log("Firestore에서 데이터 가져오기 시작");
-        const snapshot = await attendanceRef.get();
-        console.log(`가져온 문서 수: ${snapshot.size}`);
-
-        const batch = db.batch();
-        snapshot.forEach((doc) => {
-            console.log(`업데이트 중: ${doc.id}`);
-            batch.update(doc.ref, { status: "not-checked" });
-        });
-
-        await batch.commit();
-        console.log("Firestore 업데이트 완료");
-    } catch (error) {
-        console.error("출석 상태 초기화 중 오류 발생:", error);
-    }
-    return null;
-});
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.2.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
