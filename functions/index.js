@@ -4,8 +4,8 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.resetAttendanceStatus = onSchedule("0 0 * * *", {
-    timeZone: "Asia/Seoul", // 한국 시간대 설정
-    region: "asia-northeast3" // 서울 리전 설정 추가
+    timeZone: "Asia/Seoul",
+    region: "asia-northeast3" 
 }, async (context) => {
     console.log("함수 실행 시작");
     const db = admin.firestore();
