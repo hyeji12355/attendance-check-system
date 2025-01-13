@@ -1,4 +1,5 @@
 name: Deploy Firebase Functions
+
 on:
   push:
     branches:
@@ -7,22 +8,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          
-      - name: Install Dependencies
-        run: |
-          cd functions
-          npm install
-          
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only functions
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_ID: attendance-check-system
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd functions
+        npm install
+
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+
+    - name: Deploy Firebase Functions
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      run: |
+        firebase deploy --only functions
