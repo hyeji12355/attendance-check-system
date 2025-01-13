@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "/sendAlarm",
+        "function": "sendAlarm"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
