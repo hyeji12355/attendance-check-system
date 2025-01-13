@@ -1,11 +1,13 @@
 import { db } from "./firebase.js";
 import {
    collection,
-   getDocs, 
+   getDocs,
    doc,
    updateDoc,
    Timestamp,
    getDoc,
+   query,
+   where
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 // URL에서 user_id 가져오기
@@ -41,13 +43,16 @@ async function sendAlarmTalk(phone, templateId, variables) {
 // 출석 알림 발송 함수
 async function sendAttendanceNotification(userId) {
    try {
-       // 사용자 정보 가져오기
-       const userDoc = await getDoc(doc(db, "users", userId));
-       if (!userDoc.exists()) {
+       // user_id 필드로 사용자 찾기
+       const usersRef = collection(db, "users");
+       const q = query(usersRef, where("user_id", "==", userId));
+       const querySnapshot = await getDocs(q);
+       
+       if (querySnapshot.empty) {
            throw new Error('사용자 정보를 찾을 수 없음');
        }
 
-       const userData = userDoc.data();
+       const userData = querySnapshot.docs[0].data();
        const variables = {
            name: userData.name
        };
