@@ -41,7 +41,6 @@ async function sendAlarmTalk(phone, templateId, variables) {
 // 출석 알림 발송 함수
 async function sendAttendanceNotification(userId) {
     try {
-        // 사용자 정보 가져오기
         const userDoc = await getDoc(doc(db, "users", userId));
         if (!userDoc.exists()) {
             throw new Error('사용자 정보를 찾을 수 없음');
@@ -52,14 +51,12 @@ async function sendAttendanceNotification(userId) {
             name: userData.name,
         };
 
-        // 출석자에게 알람톡 발송
         await sendAlarmTalk(
             userData.contact,
             'ppur_2025010219515692092846588',
             variables
         );
 
-        // 보호자 알림이 활성화된 경우 보호자에게도 발송
         if (userData.preferences?.notify_guardian) {
             await sendAlarmTalk(
                 userData.guardian_contact,
@@ -131,7 +128,4 @@ export const resetAllStatuses = async () => {
         console.error("상태 초기화 중 오류 발생:", error);
     }
 };
-
-// 테스트 실행용 코드 (원하는 조건에서 호출하세요)
-// resetAllStatuses();
 
