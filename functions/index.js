@@ -165,3 +165,41 @@ exports.sendAlarm = functions.https.onRequest(async (req, res) => {
     }
 });
 
+// 출석 체크 트리거 함수
+exports.checkInAttendance = functions.https.onRequest(async (req, res) => {
+    if (req.method !== 'POST') {
+        res.status(405).send('Method Not Allowed');
+        return;
+    }
+
+    const { userId } = req.body;
+
+    if (!userId) {
+        res.status(400).send('userId is required');
+        return;
+    }
+
+    const db = admin.firestore();
+    const attendanceRef = db.collection("attendance").doc(userId);
+
+    try {
+        const doc = await attendanceRef.get();
+
+        if (!doc.exists) {
+            res.status(404).send('User not found');
+            return;
+        }
+
+        // 출석 상태와 현재 시간 기록
+        await attendanceRef.update({
+            status: "checked", // 출석 상태를 'checked'로 변경
+            checkInTime: admin.firestore.FieldValue.serverTimestamp() // 현재 시간 기록
+        });
+
+        res.status(200).send('Attendance checked in successfully');
+    } catch (error) {
+        console.error("Error checking in attendance:", error);
+        res.status(500).send('Error checking in attendance');
+    }
+});
+
