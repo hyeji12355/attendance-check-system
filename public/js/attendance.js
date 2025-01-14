@@ -14,7 +14,7 @@ const userId = params.get("user_id");
 // 알람톡 발송 함수
 async function sendAlarmTalk(phone, templateId, variables) {
     try {
-        const response = await fetch('/api/send-alarm', {
+        const response = await fetch('https://sendalarm-ldpq5bshlq-uc.a.run.app', { // Cloud Run URL로 수정
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -22,20 +22,22 @@ async function sendAlarmTalk(phone, templateId, variables) {
             body: JSON.stringify({
                 phone,
                 templateId,
-                variables,
-            }),
+                variables
+            })
         });
-
+        
         if (!response.ok) {
-            throw new Error('알람톡 발송 실패');
+            const errorResponse = await response.text(); // 응답 본문을 확인
+            throw new Error(`알람톡 발송 실패: ${response.status} ${errorResponse}`);
         }
-
+        
         console.log('알람톡 발송 성공');
     } catch (error) {
         console.error('알람톡 발송 중 오류:', error);
         throw error;
     }
 }
+
 
 // 출석 알림 발송 함수
 async function sendAttendanceNotification(userId) {
