@@ -25,7 +25,9 @@ async function sendAlarmTalk(phone, templateId, variables) {
            body: JSON.stringify({
                phone,
                templateId,
-               variables
+               variables: {
+                   name: variables.name
+               }
            })
        });
        
@@ -140,6 +142,10 @@ export const resetAllStatuses = async () => {
    } catch (error) {
        console.error("상태 초기화 중 오류 발생:", error);
    }
+};
+
+// 테스트 실행용 코드 (원하는 조건에서 호출하세요)
+// resetAllStatuses();
 };
 
 // 테스트 실행용 코드 (원하는 조건에서 호출하세요)
