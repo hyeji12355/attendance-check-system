@@ -7,8 +7,10 @@ import {
    Timestamp,
    getDoc,
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
 const params = new URLSearchParams(window.location.search);
 const userId = params.get("user_id");
+
 // 알람톡 발송 함수
 async function sendAlarmTalk(phone, templateId, variables) {
    try {
@@ -23,18 +25,19 @@ async function sendAlarmTalk(phone, templateId, variables) {
                variables
            })
        });
-       
+
        if (!response.ok) {
            const errorResponse = await response.text(); // 응답 본문을 확인
            throw new Error(`알람톡 발송 실패: ${response.status} ${errorResponse}`);
        }
-       
+
        console.log('알람톡 발송 성공');
    } catch (error) {
        console.error('알람톡 발송 중 오류:', error);
        throw error;
    }
 }
+
 // 출석 알림 발송 함수
 async function sendAttendanceNotification(userId) {
    try {
@@ -53,15 +56,18 @@ async function sendAttendanceNotification(userId) {
        console.error('출석 알림 발송 중 오류:', error);
    }
 }
+
 // 출석 확인 및 업데이트
 if (userId) {
    const attendanceDoc = doc(db, "attendance", userId);
    getDoc(attendanceDoc)
        .then((docSnap) => {
            if (docSnap.exists()) {
+               // 업데이트 로직: checkInTime 추가
                updateDoc(attendanceDoc, {
                    status: "checked",
                    date: Timestamp.now(),
+                   checkInTime: Timestamp.now() // 현재 시간 기록
                }).then(() => {
                    document.querySelector("span.emoji").textContent = "✅";
                    document.querySelector("h1").textContent = "출석 완료!";
