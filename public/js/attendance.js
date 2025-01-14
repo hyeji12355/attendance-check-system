@@ -17,7 +17,7 @@ const userId = params.get("user_id");
 // 알람톡 발송 함수 
 async function sendAlarmTalk(phone, templateId, variables) {
    try {
-       const response = await fetch('/api/send-alarm', {
+       const response = await fetch('https://sendalarm-ldpq5bshlq-uc.a.run.app', {
            method: 'POST',
            headers: {
                'Content-Type': 'application/json',
