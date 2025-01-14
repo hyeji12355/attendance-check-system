@@ -23,7 +23,7 @@ async function getAccessToken() {
 
         const data = await response.json();
         console.log("발급된 Access Token:", data.token);
-        return data.token;
+        return data.token; // 발급된 토큰 반환
     } catch (error) {
         console.error("Access Token 발급 중 오류 발생:", error);
         throw error;
@@ -70,22 +70,56 @@ exports.resetAttendanceStatus = onSchedule({
     region: "us-central1",
     memory: "256MiB",
 }, async () => {
+    console.log("함수 실행 시작");
     const db = admin.firestore();
     const attendanceRef = db.collection("attendance");
+    const attendanceLogsRef = db.collection("attendance_logs");
 
     try {
+        console.log("Firestore에서 데이터 가져오기 시작");
         const snapshot = await attendanceRef.get();
-        const batch = db.batch();
+        console.log(`가져온 문서 수: ${snapshot.size}`);
 
-        snapshot.forEach((doc) => {
+        // 1. 로그 생성
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+
+        const logsData = {
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            date: dateString,
+            attendances: {}
+        };
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            console.log(`로그에 추가 중: ${doc.id}`);
+            logsData.attendances[doc.id] = {
+                status: data.status || "not-checked", // 초기화 이전의 상태 기록
+                checkInTime: data.checkInTime || null,
+                checkOutTime: data.checkOutTime || null
+            };
+        });
+
+        await attendanceLogsRef.doc(dateString).set(logsData);
+        console.log(`${dateString} 출석 로그 생성 완료`);
+
+        // 2. 상태 초기화
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+            console.log(`상태 초기화 중: ${doc.id}`);
             batch.update(doc.ref, { status: "not-checked" });
         });
 
         await batch.commit();
-        console.log("모든 출석 상태 초기화 완료");
+        console.log("Firestore 업데이트 완료");
+
     } catch (error) {
-        console.error("출석 상태 초기화 중 오류 발생:", error);
+        console.error("처리 중 오류 발생:", error);
+        throw error;
     }
+
+    console.log("함수 실행 종료");
+    return null;
 });
 
 // 알람톡 발송 트리거 함수
@@ -96,10 +130,38 @@ exports.sendAlarm = functions.https.onRequest(async (req, res) => {
     }
 
     try {
+        // Access Token 발급
+        const accessToken = await getAccessToken();
+
         const { phone, templateId, variables } = req.body;
-        await sendAlarmTalk(phone, templateId, variables);
-        res.status(200).send('알림톡 발송 성공');
+
+        // 뿌리오 API 호출
+        const response = await fetch('https://message.ppurio.com/v1/kakao', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                senderProfile: "@뿌리오", // 발신 프로필명
+                templateCode: templateId,
+                targets: [
+                    {
+                        to: phone,
+                        changeWord: variables
+                    }
+                ]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('알람톡 발송 실패');
+        }
+
+        res.status(200).send('알람톡 발송 성공');
     } catch (error) {
-        res.status(500).send('알림톡 발송 실패');
+        console.error('알람톡 발송 오류:', error);
+        res.status(500).send('알람톡 발송 실패');
     }
 });
+
