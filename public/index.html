@@ -1,50 +1,101 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출석 확인</title>
-    <style>
-        body {
-            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-            background: #dbd8e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 320px;
-            width: 100%;
-        }
-        .card h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .card p {
-            font-size: 16px;
-            color: #666;
-        }
-    </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>출석 확인</title>
+   <style>
+       @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+       body {
+           font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+           background: #f3f4f8;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           height: 100vh;
+           margin: 0;
+           padding: 20px;
+           box-sizing: border-box;
+       }
+
+       .card {
+           background: #fff;
+           padding: 32px 25px;
+           border-radius: 28px;
+           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+           text-align: center;
+           max-width: 300px;
+           width: 100%;
+           position: relative;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           gap: 12px;
+           border-top: 4px solid #818cf8;
+       }
+
+       h1 {
+           font-size: 22px;
+           margin: 0;
+           font-weight: 700;
+           letter-spacing: -0.5px;
+           color: #424242;
+       }
+
+       .emoji {
+           font-size: 38px;
+           margin: 0;
+           line-height: 1;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           height: 50px;
+       }
+
+       p {
+           font-size: 15px;
+           line-height: 1.6;
+           margin: 0;
+           font-weight: 400;
+           word-break: keep-all;
+           color: #6b7280;
+       }
+
+       .kakao-text {
+           color: #e11d48;
+           font-weight: 700;
+       }
+
+       /* 성공 상태 */
+       .success {
+           border-top-color: #4ade80;
+       }
+       .success h1 {
+           color: #15803d;
+       }
+       .success p {
+           color: #166534;
+       }
+
+       /* 에러 상태 */
+       .error {
+           border-top-color: #f87171;
+       }
+       .error h1 {
+           color: #b91c1c;
+       }
+
+   </style>
 </head>
 <body>
-    <div class="card">
-        <h1>출석 확인 중...</h1>
-        <p>잠시만 기다려주세요.</p>
-    </div>
-
-    <!-- JavaScript 파일 불러오기 -->
-
-    <script type="module" src="./js/firebase.js"></script>
-    <script type="module" src="./js/attendance.js"></script>
+   <div class="card">
+       <span class="emoji">⌛</span>
+       <h1>출석 확인 중</h1>
+       <p>잠시만 기다려주세요</p>
+   </div>
+   <!-- JavaScript 파일 불러오기 -->
+   <script type="module" src="./js/firebase.js"></script>
+   <script type="module" src="./js/attendance.js"></script>
 </body>
 </html>
