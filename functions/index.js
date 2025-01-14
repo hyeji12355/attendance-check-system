@@ -10,12 +10,11 @@ admin.initializeApp();
 async function getAccessToken() {
     try {
         const base64Credentials = Buffer.from(`${process.env.PPURIO_USER_ID}:${process.env.PPURIO_API_KEY}`).toString('base64');
-
         const response = await fetch('https://message.ppurio.com/v1/token', {
             method: 'POST',
             headers: {
-                Authorization: `Basic ${base64Credentials}`
-            }
+                Authorization: `Basic ${base64Credentials}`,
+            },
         });
 
         if (!response.ok) {
@@ -34,44 +33,43 @@ async function getAccessToken() {
 // 알람톡 발송 함수
 async function sendAlarmTalk(phone, templateId, variables) {
     try {
-        const accessToken = await getAccessToken();
-
+        const token = await getAccessToken();
         const response = await fetch('https://message.ppurio.com/v1/kakao', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                senderProfile: "@뿌리오",
+                senderProfile: '@뿌리오',
                 templateCode: templateId,
                 targets: [
                     {
                         to: phone,
-                        changeWord: variables
-                    }
-                ]
-            })
+                        changeWord: variables,
+                    },
+                ],
+            }),
         });
 
         if (!response.ok) {
-            throw new Error('알람톡 발송 실패');
+            throw new Error('알림톡 발송 실패');
         }
 
-        console.log('알람톡 발송 성공');
+        console.log('알림톡 발송 성공');
     } catch (error) {
-        console.error('알람톡 발송 중 오류:', error);
+        console.error('알림톡 발송 중 오류:', error);
         throw error;
     }
 }
 
-// resetAttendanceStatus 함수
+// 출석 상태 초기화 함수
 exports.resetAttendanceStatus = onSchedule({
     schedule: "0 15 * * *", // UTC 기준 15:00 (한국 시간 00:00)
     timeZone: "Etc/UTC",
     region: "us-central1",
     memory: "256MiB",
-}, async (context) => {
+}, async () => {
     const db = admin.firestore();
     const attendanceRef = db.collection("attendance");
 
@@ -86,11 +84,11 @@ exports.resetAttendanceStatus = onSchedule({
         await batch.commit();
         console.log("모든 출석 상태 초기화 완료");
     } catch (error) {
-        console.error("상태 초기화 중 오류 발생:", error);
+        console.error("출석 상태 초기화 중 오류 발생:", error);
     }
 });
 
-// sendAlarm 함수
+// 알람톡 발송 트리거 함수
 exports.sendAlarm = functions.https.onRequest(async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send('Method Not Allowed');
@@ -100,9 +98,8 @@ exports.sendAlarm = functions.https.onRequest(async (req, res) => {
     try {
         const { phone, templateId, variables } = req.body;
         await sendAlarmTalk(phone, templateId, variables);
-        res.status(200).send('알람톡 발송 성공');
+        res.status(200).send('알림톡 발송 성공');
     } catch (error) {
-        console.error('알람톡 발송 오류:', error);
-        res.status(500).send('알람톡 발송 실패');
+        res.status(500).send('알림톡 발송 실패');
     }
 });
