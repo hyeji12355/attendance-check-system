@@ -122,6 +122,31 @@ exports.resetAttendanceStatus = onSchedule({
     return null;
 });
 
+// 시간 기반 출석 알림 스케줄러
+exports.sendScheduledAttendanceNotifications = onSchedule({
+   schedule: "0 13-23,0-7 * * *", // PST 기준 오후 1시~오전 7시 실행
+    timeZone: "America/Los_Angeles", // 미국 태평양 시간
+    region: "us-central1",          // Firebase Functions 지역 설정
+    memory: "256MiB",               // 메모리 설정
+}, async () => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hours}:${minutes}`;
+
+    console.log(`[스케줄러] 현재 시간: ${currentTime}`);
+
+    try {
+        // notifications.js의 함수 호출
+        const { sendTimeBasedNotifications } = require('./notifications.js');
+        await sendTimeBasedNotifications(currentTime);
+        console.log(`[스케줄러] ${currentTime} 알림 발송 완료`);
+    } catch (error) {
+        console.error(`[스케줄러] ${currentTime} 알림 발송 중 오류:`, error);
+    }
+});
+
+
 // 알람톡 발송 트리거 함수
 exports.sendAlarm = functions.https.onRequest(async (req, res) => {
     if (req.method !== 'POST') {
