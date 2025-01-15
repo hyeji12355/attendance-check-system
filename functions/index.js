@@ -9,7 +9,12 @@ admin.initializeApp();
 // Access Token 발급 함수
 async function getAccessToken() {
     try {
-        const base64Credentials = Buffer.from(`${process.env.PPURIO_USER_ID}:${process.env.PPURIO_API_KEY}`).toString('base64');
+        // Firebase Functions 환경 변수에서 ppurio.userid와 ppurio.apikey를 가져옵니다.
+        const userId = functions.config().ppurio.userid;
+        const apiKey = functions.config().ppurio.apikey;
+
+        // Base64로 인코딩
+        const base64Credentials = Buffer.from(`${userId}:${apiKey}`).toString('base64');
         const response = await fetch('https://message.ppurio.com/v1/token', {
             method: 'POST',
             headers: {
