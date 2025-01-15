@@ -20,13 +20,14 @@ jobs:
           cd functions
           npm install
           
-      - name: Set Firebase Config
-        env:
-          PPURIO_USER_ID: ${{ secrets.PPURIO_USER_ID }}
-          PPURIO_API_KEY: ${{ secrets.PPURIO_API_KEY }}
-        run: |
-          npm install -g firebase-tools
-          firebase functions:config:set ppurio.userid="$PPURIO_USER_ID" ppurio.apikey="$PPURIO_API_KEY"
+    - name: Set Firebase Config
+  env:
+    PPURIO_USER_ID: ${{ secrets.PPURIO_USER_ID }}
+    PPURIO_API_KEY: ${{ secrets.PPURIO_API_KEY }}
+  run: |
+    npm install -g firebase-tools
+    firebase functions:config:set ppurio.userid="$PPURIO_USER_ID" ppurio.apikey="$PPURIO_API_KEY" --project attendance-check-system
+
           
       - name: Deploy to Firebase
         env:
