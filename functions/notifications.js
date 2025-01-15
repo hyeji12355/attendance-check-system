@@ -2,7 +2,6 @@ const { db } = require('./firebase'); // Firebase Admin SDK 초기화
 const { doc, getDoc, collection, where, getDocs } = require('firebase-admin/firestore');
 
 
-
 // 알람톡 발송 함수
 async function sendAlarmTalk(phone, templateId, variables) {
     try {
